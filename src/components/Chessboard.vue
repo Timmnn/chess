@@ -13,7 +13,7 @@
   </div>
   <p class="error">{{ error_message }}</p>
   <p>It's {{ whites_turn ? "White" : "Black" }}'s turn</p>
-  <p v-if="piece_to_move">{{ piece_to_move }} {{getPieceAtPosition(piece_to_move.r, piece_to_move.c)}} selected</p>
+  <p v-if="piece_to_move">{{ piece_to_move }} {{ getPieceAtPosition(piece_to_move.r, piece_to_move.c) }} selected</p>
   <p v-else>No Piece selected</p>
 </template>
 
@@ -105,12 +105,60 @@ export default {
           return this.getPawnMoveList(r, c, is_white);
       }
     },
+    getKnightMoveList(r, c, is_white) {
+      return []
+    },
+    getBishopMoveList(r, c, is_white) {
+      return []
+    },
+    getQueenMoveList(r, c, is_white) {
+      return []
+    },
+    getKingMoveList(r, c, is_white) {
+      return []
+    },
+    getRookMoveList(r, c, is_white) {
+      const move_list = [];
+
+      // x-axis
+      for (let i = 0; i < 7; i++) {
+        const target_r = r;
+        const target_c = i;
+        if (this.getPieceAtPosition(target_r, target_c) === undefined) {
+          move_list.push([target_r, target_c]);
+        } else {
+          if (this.getPieceAtPosition(target_r, target_c).includes("_w") !== is_white) {
+            move_list.push([target_r, target_c]);
+          }
+          break;
+        }
+      }
+
+      // y-axis
+      for (let i = 0; i < 7; i++) {
+        const target_r = i;
+        const target_c = c;
+        console.log(this.getPieceAtPosition(target_r, target_c), target_r, target_c)
+        if (this.getPieceAtPosition(target_r, target_c) === undefined) {
+          move_list.push([target_r, target_c]);
+          console.log("pushing", target_r, target_c);
+        } else {
+          if (this.getPieceAtPosition(target_r, target_c).includes("_w") !== is_white) {
+            move_list.push([target_r, target_c]);
+          } else if (!this.getPieceAtPosition(target_r, target_c).includes("rook")) {
+            break
+          }
+        }
+      }
+
+      this.possible_moves_for_selected_piece = move_list;
+      console.log(move_list);
+      return move_list;
+
+    },
 
     getPawnMoveList(r, c, is_white) {
       const move_direction = is_white ? 1 : -1;
-
-      console.log(this.getPieceAtPosition(r + 1 * move_direction, c), this.getPieceAtPosition(r + 1 * move_direction, c + 1), this.getPieceAtPosition(r + 1 * move_direction, c - 1))
-
       const move_list = [];
       if (this.getPieceAtPosition(r + 1 * move_direction, c) === undefined) {
         move_list.push([r + 1 * move_direction, c]);
